@@ -1,0 +1,9 @@
+services:
+  backend_dev:
+    build: .
+    restart: always
+    environment:
+      API_URL: https://dev.testwebsite.co
+      API_ACCESS_KEY: dev_access_key
+    ports:
+      - '51002:8080'

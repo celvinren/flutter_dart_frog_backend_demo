@@ -1,0 +1,9 @@
+services:
+  backend_prod:
+    build: .
+    restart: always
+    environment:
+      API_URL: https://prod.testwebsite.co
+      API_ACCESS_KEY: prod_access_key
+    ports:
+      - '51001:8080'
