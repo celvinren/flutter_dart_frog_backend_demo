@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 void main() {
@@ -33,16 +32,25 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   WebSocketChannel? wsChannel;
+  Uri? uri;
   @override
   void initState() {
     super.initState();
-    final uri = Uri.parse('ws://10.0.2.2:8080/ws_demo/ws');
-    wsChannel = WebSocketChannel.connect(uri);
+
+    ///Web
+    // final uri = Uri.parse('ws://127.0.0.1:8080/ws_demo/ws');
+
+    ///GenyMotion Emulator
+    uri = Uri.parse('ws://10.0.3.2:8080/ws_demo/105');
+
+    ///Android Emulator
+    // final uri = Uri.parse('ws://10.0.2.2:8080/ws_demo/ws');
+    wsChannel = WebSocketChannel.connect(uri!);
   }
 
   @override
   void dispose() {
-    wsChannel?.sink.close(status.goingAway);
+    wsChannel?.sink.close();
     super.dispose();
   }
 
@@ -59,10 +67,27 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             StreamBuilder(
               builder: (ct, data) {
-                return Center(
-                  child: Text(
-                    (data.data as String?) ?? '',
-                  ),
+                return Column(
+                  children: [
+                    Center(
+                      child: Text(
+                        (data.data as String?) ?? '',
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        wsChannel?.sink.close();
+                        wsChannel = null;
+                      },
+                      child: const Text('Disconnect'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        wsChannel ??= WebSocketChannel.connect(uri!);
+                      },
+                      child: const Text('Reconnect'),
+                    ),
+                  ],
                 );
               },
               stream: wsChannel!.stream,
